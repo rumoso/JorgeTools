@@ -122,7 +122,9 @@
             this.cbxNombreCliente.Name = "cbxNombreCliente";
             this.cbxNombreCliente.Size = new System.Drawing.Size(495, 21);
             this.cbxNombreCliente.TabIndex = 112;
-            this.cbxNombreCliente.SelectedIndexChanged += new System.EventHandler(this.cbxNombreCliente_SelectedIndexChanged);
+            this.cbxNombreCliente.SelectionChangeCommitted += new System.EventHandler(this.cbxNombreCliente_SelectionChangeCommitted);
+            this.cbxNombreCliente.TextUpdate += new System.EventHandler(this.cbxNombreCliente_TextUpdate);
+            this.cbxNombreCliente.Enter += new System.EventHandler(this.cbxNombreCliente_Enter);
             // 
             // label15
             // 
@@ -372,7 +374,9 @@
             this.cbxNombreProd.Name = "cbxNombreProd";
             this.cbxNombreProd.Size = new System.Drawing.Size(689, 21);
             this.cbxNombreProd.TabIndex = 118;
-            this.cbxNombreProd.SelectedIndexChanged += new System.EventHandler(this.cbxNombreProd_SelectedIndexChanged);
+            this.cbxNombreProd.SelectionChangeCommitted += new System.EventHandler(this.cbxNombreProd_SelectionChangeCommitted);
+            this.cbxNombreProd.TextUpdate += new System.EventHandler(this.cbxNombreProd_TextUpdate);
+            this.cbxNombreProd.Enter += new System.EventHandler(this.cbxNombreProd_Enter);
             // 
             // label13
             // 

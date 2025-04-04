@@ -93,7 +93,7 @@ $" O.Id = {idOrden};";
 
                             var iColumn = 2;
                             // *Sales Order (Temporary ID)
-                            worksheet.Cell(startRow + i, iColumn).Value = (i + 1);
+                            worksheet.Cell(startRow + i, iColumn).Value = "1";
                             iColumn++;
                             // *Sales Order Type
                             worksheet.Cell(startRow + i, iColumn).Value = "OR";

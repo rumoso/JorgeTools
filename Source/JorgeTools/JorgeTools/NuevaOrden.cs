@@ -17,8 +17,11 @@ namespace JorgeTools
     public partial class NuevaOrden : Form
     {
         bool inicia = true;
+        long idOrden = 0;
         Orden _orden = new Orden();
         OrdDetalle _ordDetalle = new OrdDetalle();
+        List<cbxProductos> _productsList = new List<cbxProductos>();
+        List<cbxClientes> _clientsList = new List<cbxClientes>();
         public NuevaOrden()
         {
             InitializeComponent();
@@ -28,6 +31,8 @@ namespace JorgeTools
             _orden.ordDetalle = new List<Clases.OrdDetalle>();
             cbxNombreCliente.Focus();
             dtpDate.Value = DateTime.Now;
+            cbxNombreCliente.DropDownStyle = ComboBoxStyle.DropDown;
+            cbxNombreProd.DropDownStyle = ComboBoxStyle.DropDown;
         }
 
         //*********************************************METODOS*********************************************
@@ -76,15 +81,20 @@ namespace JorgeTools
                     // Crear un adaptador para llenar un DataTable con los datos obtenidos
                     using (var adapter = new SQLiteDataAdapter(command))
                     {
-                        DataTable dt = new DataTable();
-                        adapter.Fill(dt);
+                        DataTable OData = new DataTable();
+                        adapter.Fill(OData);
 
+                        for (int i = 0; i < OData.Rows.Count; i++)
+                        {
+                            var source_id = OData.Rows[i]["source_id"].ToString();
+                            var name_org1 = OData.Rows[i]["name_org1"].ToString();
+                            _clientsList.Add(new cbxClientes() { source_id = source_id, name_org1 = name_org1 });
+                        }
+
+                        cbxNombreCliente.Items.AddRange(_clientsList.ToArray());
                         cbxNombreCliente.DisplayMember = "name_org1";
                         cbxNombreCliente.ValueMember = "source_id";
-                        cbxNombreCliente.AutoCompleteMode = AutoCompleteMode.Suggest;
-                        cbxNombreCliente.AutoCompleteSource = AutoCompleteSource.ListItems;
-                        cbxNombreCliente.DataSource = dt;
-                        cbxNombreCliente.SelectedIndex = -1;
+                        cbxNombreCliente.Focus();
                     }
                 }
                 connection.Close();
@@ -112,15 +122,19 @@ namespace JorgeTools
                     // Crear un adaptador para llenar un DataTable con los datos obtenidos
                     using (var adapter = new SQLiteDataAdapter(command))
                     {
-                        DataTable dt = new DataTable();
-                        adapter.Fill(dt);
+                        DataTable OData = new DataTable();
+                        adapter.Fill(OData);
 
+                        for (int i = 0; i < OData.Rows.Count; i++)
+                        {
+                            var codigoSap = OData.Rows[i]["codigoSap"].ToString();
+                            var descriptionSAP = OData.Rows[i]["descriptionSAP"].ToString();
+                            _productsList.Add(new cbxProductos() { codigoSap = codigoSap, descriptionSAP = descriptionSAP });
+                        }
+
+                        cbxNombreProd.Items.AddRange(_productsList.ToArray());
                         cbxNombreProd.DisplayMember = "descriptionSAP";
                         cbxNombreProd.ValueMember = "codigoSap";
-                        cbxNombreProd.AutoCompleteMode = AutoCompleteMode.Suggest;
-                        cbxNombreProd.AutoCompleteSource = AutoCompleteSource.ListItems;
-                        cbxNombreProd.DataSource = dt;
-                        cbxNombreProd.SelectedIndex = -1;
                     }
                 }
                 connection.Close();
@@ -229,35 +243,9 @@ namespace JorgeTools
             }
         }
 
-        private void cbxNombreCliente_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!inicia && cbxNombreCliente.Items.Count > 0 && cbxNombreCliente.SelectedIndex > -1)
-            {
-                var folio = cbxNombreCliente.SelectedValue.ToString();
-                ObtenerCliente(folio);
-            }
-            else
-            {
-                tbxCodigoCliente.Text = "";
-            }
-        }
-
         private void tbxCodigoCliente_Leave(object sender, EventArgs e)
         {
             ObtenerCliente(tbxCodigoCliente.Text);
-        }
-
-        private void cbxNombreProd_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!inicia && cbxNombreProd.Items.Count > 0 && cbxNombreProd.SelectedIndex > -1)
-            {
-                var id = cbxNombreProd.SelectedValue.ToString();
-                ObtenerProdByID(id);
-            }
-            else
-            {
-                tbxCodigoProd.Text = "";
-            }
         }
 
         private void tbxCustomerReference_KeyDown(object sender, KeyEventArgs e)
@@ -325,75 +313,78 @@ namespace JorgeTools
 
         public void GuardarOrden(Orden orden)
         {
-            var connection = dbManager.GetConnection();
-            connection.Open();
-
-            // Iniciar una transacción para asegurar la atomicidad
-            using (var transaction = connection.BeginTransaction())
+            if(idOrden == 0)
             {
-                try
+                var connection = dbManager.GetConnection();
+                connection.Open();
+
+                // Iniciar una transacción para asegurar la atomicidad
+                using (var transaction = connection.BeginTransaction())
                 {
-                    // Insertar el encabezado de la orden
-                    string insertOrdenQuery = @"
+                    try
+                    {
+                        // Insertar el encabezado de la orden
+                        string insertOrdenQuery = @"
                         INSERT INTO Ordenes (salesOrganization, division, shipToParty, customerReference, requestDeliveryDate, plant)
                         VALUES (@salesOrganization, @division, @shipToParty, @customerReference, @requestDeliveryDate, @plant);
                     ";
 
-                    using (var command = new SQLiteCommand(insertOrdenQuery, connection, transaction))
-                    {
-                        command.Parameters.AddWithValue("@salesOrganization", orden.salesOrganization);
-                        command.Parameters.AddWithValue("@division", orden.division);
-                        command.Parameters.AddWithValue("@shipToParty", orden.shipToParty);
-                        command.Parameters.AddWithValue("@customerReference", orden.customerReference);
-                        command.Parameters.AddWithValue("@requestDeliveryDate", orden.requestDeliveryDate);
-                        command.Parameters.AddWithValue("@plant", orden.plant);
+                        using (var command = new SQLiteCommand(insertOrdenQuery, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@salesOrganization", orden.salesOrganization);
+                            command.Parameters.AddWithValue("@division", orden.division);
+                            command.Parameters.AddWithValue("@shipToParty", orden.shipToParty);
+                            command.Parameters.AddWithValue("@customerReference", orden.customerReference);
+                            command.Parameters.AddWithValue("@requestDeliveryDate", orden.requestDeliveryDate);
+                            command.Parameters.AddWithValue("@plant", orden.plant);
 
-                        command.ExecuteNonQuery();
-                    }
+                            command.ExecuteNonQuery();
+                        }
 
-                    // Obtener el ID generado para la orden
-                    long ordenId;
-                    using (var command = new SQLiteCommand("SELECT last_insert_rowid();", connection, transaction))
-                    {
-                        ordenId = (long)command.ExecuteScalar();
-                    }
+                        // Obtener el ID generado para la orden
+                        long ordenId;
+                        using (var command = new SQLiteCommand("SELECT last_insert_rowid();", connection, transaction))
+                        {
+                            idOrden = ordenId = (long)command.ExecuteScalar();
+                        }
 
-                    // Insertar los detalles de la orden
-                    string insertOrdenDetalleQuery = @"
+                        // Insertar los detalles de la orden
+                        string insertOrdenDetalleQuery = @"
                         INSERT INTO OrdenDetalles (OrdenId, itemID, product_CodigoSap, product_CodigoBan, requested_quantity, requested_QtyUnit)
                         VALUES (@OrdenId, @itemID, @product_CodigoSap, @product_CodigoBan, @requested_quantity, @requested_QtyUnit);
                     ";
 
-                    foreach (var detalle in orden.ordDetalle)
-                    {
-                        using (var command = new SQLiteCommand(insertOrdenDetalleQuery, connection, transaction))
+                        foreach (var detalle in orden.ordDetalle)
                         {
-                            command.Parameters.AddWithValue("@OrdenId", ordenId);
-                            command.Parameters.AddWithValue("@itemID", detalle.itemID);
-                            command.Parameters.AddWithValue("@product_CodigoSap", detalle.product_CodigoSap);
-                            command.Parameters.AddWithValue("@product_CodigoBan", detalle.product_CodigoBan);
-                            command.Parameters.AddWithValue("@requested_quantity", detalle.requested_quantity);
-                            command.Parameters.AddWithValue("@requested_QtyUnit", detalle.requested_QtyUnit);
+                            using (var command = new SQLiteCommand(insertOrdenDetalleQuery, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@OrdenId", ordenId);
+                                command.Parameters.AddWithValue("@itemID", detalle.itemID);
+                                command.Parameters.AddWithValue("@product_CodigoSap", detalle.product_CodigoSap);
+                                command.Parameters.AddWithValue("@product_CodigoBan", detalle.product_CodigoBan);
+                                command.Parameters.AddWithValue("@requested_quantity", detalle.requested_quantity);
+                                command.Parameters.AddWithValue("@requested_QtyUnit", detalle.requested_QtyUnit);
 
-                            command.ExecuteNonQuery();
+                                command.ExecuteNonQuery();
+                            }
                         }
+
+                        // Confirmar la transacción
+                        transaction.Commit();
+                        MessageBox.Show("Orden generada con éxito");
+                        ReimprimirOrden(ordenId);
+                        this.Close();
                     }
-
-                    // Confirmar la transacción
-                    transaction.Commit();
-                    MessageBox.Show("Orden generada con éxito");
-                    ReimprimirOrden(ordenId);
-                    this.Close();
+                    catch (Exception ex)
+                    {
+                        // Revertir la transacción en caso de error
+                        transaction.Rollback();
+                        throw new Exception("Error al guardar la orden y sus detalles: " + ex.Message);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    // Revertir la transacción en caso de error
-                    transaction.Rollback();
-                    throw new Exception("Error al guardar la orden y sus detalles: " + ex.Message);
-                }
-            }
 
-            connection.Close();
+                connection.Close();
+            }   
         }
 
         private void ReimprimirOrden(long idOrden)
@@ -477,6 +468,143 @@ namespace JorgeTools
             {
                 e.Handled = true; // Cancela la tecla presionada
             }
+        }
+
+        private void cbxNombreProd_TextUpdate(object sender, EventArgs e)
+        {
+            // Texto ingresado por el usuario
+            string searchText = cbxNombreProd.Text.ToLower();
+
+            //if (string.IsNullOrEmpty(searchText))
+            //{
+                cbxNombreProd.Items.Clear();
+                    var filteredProductos = _productsList
+                .Where(p => p.codigoSap.ToLower().Contains(searchText) ||
+                            p.descriptionSAP.ToLower().Contains(searchText))
+                .ToList();
+                cbxNombreProd.Items.AddRange(filteredProductos.ToArray());
+            //}
+
+            if (!string.IsNullOrEmpty(cbxNombreProd.Text))
+            {
+                
+
+                // Desactivar eventos para evitar comportamientos extraños
+                cbxNombreProd.TextUpdate -= cbxNombreProd_TextUpdate;
+
+                // Filtrar productos directamente en los ítems del ComboBox
+                for (int i = 0; i < cbxNombreProd.Items.Count; i++)
+                {
+                    var producto = cbxNombreProd.Items[i] as cbxProductos;
+                    if (producto != null)
+                    {
+                        // Mostrar solo los que coinciden
+                        if (producto.codigoSap.ToLower().Contains(searchText) ||
+                            producto.descriptionSAP.ToLower().Contains(searchText))
+                        {
+                            cbxNombreProd.Items[i] = producto; // Mostrar
+                        }
+                        else
+                        {
+                            cbxNombreProd.Items.Remove(producto); // Ocultar
+                            i--; // Ajustar índice por remoción
+                        }
+                    }
+                }
+
+                // Restaurar el texto ingresado
+                cbxNombreProd.Text = searchText;
+                cbxNombreProd.SelectionStart = searchText.Length;
+
+                // Mantener el combo desplegado
+                cbxNombreProd.DroppedDown = true;
+
+                // Reasignar el evento
+                cbxNombreProd.TextUpdate += cbxNombreProd_TextUpdate;
+            }
+        }
+
+        private void cbxNombreProd_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (!inicia && cbxNombreProd.Items.Count > 0 && cbxNombreProd.SelectedIndex > -1)
+            {
+                cbxProductos selectedProduct = cbxNombreProd.SelectedItem as cbxProductos;
+                var id = selectedProduct.codigoSap;
+                ObtenerProdByID(id);
+            }
+        }
+
+       
+
+        private void cbxNombreProd_Enter(object sender, EventArgs e)
+        {
+            cbxNombreProd.DroppedDown = true;
+        }
+
+        private void cbxNombreCliente_TextUpdate(object sender, EventArgs e)
+        {
+            // Texto ingresado por el usuario
+            string searchText = cbxNombreCliente.Text.ToLower();
+
+            cbxNombreCliente.Items.Clear();
+            var filteredClientes = _clientsList
+            .Where(p => p.source_id.ToLower().Contains(searchText) ||
+                        p.name_org1.ToLower().Contains(searchText))
+            .ToList();
+            cbxNombreCliente.Items.AddRange(filteredClientes.ToArray());
+
+            if (!string.IsNullOrEmpty(cbxNombreCliente.Text))
+            {
+
+
+                // Desactivar eventos para evitar comportamientos extraños
+                cbxNombreCliente.TextUpdate -= cbxNombreCliente_TextUpdate;
+
+                // Filtrar productos directamente en los ítems del ComboBox
+                for (int i = 0; i < cbxNombreCliente.Items.Count; i++)
+                {
+                    var cliente = cbxNombreCliente.Items[i] as cbxClientes;
+                    if (cliente != null)
+                    {
+                        // Mostrar solo los que coinciden
+                        if (cliente.source_id.ToLower().Contains(searchText) ||
+                            cliente.name_org1.ToLower().Contains(searchText))
+                        {
+                            cbxNombreCliente.Items[i] = cliente; // Mostrar
+                        }
+                        else
+                        {
+                            cbxNombreCliente.Items.Remove(cliente); // Ocultar
+                            i--; // Ajustar índice por remoción
+                        }
+                    }
+                }
+
+                // Restaurar el texto ingresado
+                cbxNombreCliente.Text = searchText;
+                cbxNombreCliente.SelectionStart = searchText.Length;
+
+                // Mantener el combo desplegado
+                cbxNombreCliente.DroppedDown = true;
+
+                // Reasignar el evento
+                cbxNombreCliente.TextUpdate += cbxNombreCliente_TextUpdate;
+            }
+        }
+
+        private void cbxNombreCliente_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (!inicia && cbxNombreCliente.Items.Count > 0 && cbxNombreCliente.SelectedIndex > -1)
+            {
+                cbxClientes selected = cbxNombreCliente.SelectedItem as cbxClientes;
+                var id = selected.source_id;
+                ObtenerCliente(id);
+            }
+        }
+
+        private void cbxNombreCliente_Enter(object sender, EventArgs e)
+        {
+            cbxNombreCliente.DroppedDown = true;
         }
     }
 }

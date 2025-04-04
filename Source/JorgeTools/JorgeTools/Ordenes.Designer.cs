@@ -55,18 +55,20 @@
             this.groupBox1.Controls.Add(this.btnNewOrden);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(133, 54);
+            this.groupBox1.Size = new System.Drawing.Size(205, 54);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Acciones";
             // 
             // btnNewOrden
             // 
+            this.btnNewOrden.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNewOrden.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnNewOrden.Location = new System.Drawing.Point(6, 19);
             this.btnNewOrden.Name = "btnNewOrden";
-            this.btnNewOrden.Size = new System.Drawing.Size(113, 23);
+            this.btnNewOrden.Size = new System.Drawing.Size(140, 23);
             this.btnNewOrden.TabIndex = 0;
-            this.btnNewOrden.Text = "Nueva orden";
+            this.btnNewOrden.Text = "[F1] Nueva orden";
             this.btnNewOrden.UseVisualStyleBackColor = true;
             this.btnNewOrden.Click += new System.EventHandler(this.btnNewOrden_Click);
             // 

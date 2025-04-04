@@ -33,6 +33,12 @@ namespace JorgeTools
             {
                 case Keys.F1:
 
+                    NuevaOrden NOrd = new NuevaOrden();
+                    this.Visible = false;
+                    NOrd.ShowDialog();
+                    this.Visible = true;
+                    cargarOrdenesEnDataGrid();
+
                     break;
 
                 case Keys.F5:
@@ -84,7 +90,7 @@ namespace JorgeTools
 	, O.shipToParty AS idCliente
 	, C.name_org1 AS ClientName
 	, O.customerReference
-	, O.requestDeliveryDate
+    , substr(O.requestDeliveryDate, 1, 4) || '-' || substr(O.requestDeliveryDate, 5, 2) || '-' || substr(O.requestDeliveryDate, 7, 2) AS requestDeliveryDate
 	, O.plant
 FROM Ordenes AS O
 INNER JOIN Clientes AS C
