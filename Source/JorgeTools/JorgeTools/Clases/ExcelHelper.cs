@@ -170,5 +170,54 @@ $" O.Id = {idOrden};";
                 throw new FileNotFoundException($"El archivo '{ruta}' no existe.");
             }
         }
+
+        public static void writeInExcel(ref IXLWorksheet ws, string sText, string sCord, string sFontName, int iFontSize, bool bBold, XLAlignmentHorizontalValues Horizontal, XLAlignmentVerticalValues Vertical)
+        {
+            ws.Cell(sCord).Value = sText;
+            ws.Cell(sCord).Style.Font.SetFontName(sFontName);
+            ws.Cell(sCord).Style.Font.FontSize = 8;
+            ws.Cell(sCord).Style.Font.Bold = bBold;
+            ws.Cell(sCord).Style.Alignment.Horizontal = Horizontal;
+            ws.Cell(sCord).Style.Alignment.Vertical = Vertical;
+        }
+
+        public static void writeInExcelCoordNum(ref IXLWorksheet ws, string sText, int x, int y, string sFontName, int iFontSize, bool bBold, XLAlignmentHorizontalValues Horizontal, XLAlignmentVerticalValues Vertical)
+        {
+            var cell = ws.Cell(x, y);
+            cell.Value = sText;
+            cell.Style.Font.SetFontName(sFontName);
+            cell.Style.Font.FontSize = iFontSize;
+            cell.Style.Font.Bold = bBold;
+            cell.Style.Alignment.Horizontal = Horizontal;
+            cell.Style.Alignment.Vertical = Vertical;
+        }
+
+        // Para números con formato moneda
+        public static void writeInExcelCoordNum(ref IXLWorksheet ws, decimal amount, int x, int y, string sFontName, int iFontSize, bool bBold, XLAlignmentHorizontalValues Horizontal, XLAlignmentVerticalValues Vertical)
+        {
+            var cell = ws.Cell(x, y);
+            cell.Value = amount;
+            cell.Style.NumberFormat.Format = "$ #,##0.00";
+            cell.Style.Font.SetFontName(sFontName);
+            cell.Style.Font.FontSize = iFontSize;
+            cell.Style.Font.Bold = bBold;
+            cell.Style.Alignment.Horizontal = Horizontal;
+            cell.Style.Alignment.Vertical = Vertical;
+        }
+
+        public static void setColorExcel(ref IXLWorksheet ws, string sFromHtmlColor, string sCord)
+        {
+            ws.Cell(sCord).Style.Fill.BackgroundColor = XLColor.FromHtml(sFromHtmlColor);
+        }
+
+        public static void setColorRange(ref IXLWorksheet ws, string sFromHtmlColor, string sCordRange)
+        {
+            ws.Range(sCordRange).Row(1).Style.Fill.BackgroundColor = XLColor.FromHtml(sFromHtmlColor);
+        }
+
+        public static void setMergeExcel(ref IXLWorksheet ws, string sCordRange)
+        {
+            ws.Range(sCordRange).Row(1).Merge();
+        }
     }
 }

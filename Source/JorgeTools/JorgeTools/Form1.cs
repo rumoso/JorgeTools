@@ -77,5 +77,19 @@ namespace JorgeTools
             Ord.ShowDialog();
             this.Visible = true;
         }
+
+        private void cartaPorteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                cartaPorteXMLtoINI Cli = new cartaPorteXMLtoINI();
+                this.Visible = false;
+                Cli.ShowDialog();
+                this.Visible = true;
+            }
+            catch (Exception)
+            {
+            }
+        }
     }
 }

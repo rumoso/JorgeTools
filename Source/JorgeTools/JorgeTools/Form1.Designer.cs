@@ -37,6 +37,7 @@
             this.ordenesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.cartaPorteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -44,7 +45,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ordenesToolStripMenuItem});
+            this.ordenesToolStripMenuItem,
+            this.cartaPorteToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
@@ -64,21 +66,21 @@
             // clieToolStripMenuItem
             // 
             this.clieToolStripMenuItem.Name = "clieToolStripMenuItem";
-            this.clieToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.clieToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.clieToolStripMenuItem.Text = "Clientes";
             this.clieToolStripMenuItem.Click += new System.EventHandler(this.clieToolStripMenuItem_Click);
             // 
             // clientesToolStripMenuItem
             // 
             this.clientesToolStripMenuItem.Name = "clientesToolStripMenuItem";
-            this.clientesToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.clientesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.clientesToolStripMenuItem.Text = "Productos";
             this.clientesToolStripMenuItem.Click += new System.EventHandler(this.clientesToolStripMenuItem_Click);
             // 
             // ordenesToolStripMenuItem1
             // 
             this.ordenesToolStripMenuItem1.Name = "ordenesToolStripMenuItem1";
-            this.ordenesToolStripMenuItem1.Size = new System.Drawing.Size(128, 22);
+            this.ordenesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.ordenesToolStripMenuItem1.Text = "Ordenes";
             this.ordenesToolStripMenuItem1.Click += new System.EventHandler(this.ordenesToolStripMenuItem1_Click);
             // 
@@ -98,6 +100,13 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
+            // 
+            // cartaPorteToolStripMenuItem
+            // 
+            this.cartaPorteToolStripMenuItem.Name = "cartaPorteToolStripMenuItem";
+            this.cartaPorteToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
+            this.cartaPorteToolStripMenuItem.Text = "Carta Porte";
+            this.cartaPorteToolStripMenuItem.Click += new System.EventHandler(this.cartaPorteToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -130,6 +139,7 @@
         private System.Windows.Forms.ToolStripMenuItem ordenesToolStripMenuItem1;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.ToolStripMenuItem cartaPorteToolStripMenuItem;
     }
 }
 

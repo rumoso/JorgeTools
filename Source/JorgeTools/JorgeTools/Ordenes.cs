@@ -16,7 +16,6 @@ namespace JorgeTools
 {
     public partial class Ordenes : Form
     {
-        Thread hilo;
         public Ordenes()
         {
             InitializeComponent();
